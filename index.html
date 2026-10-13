@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Letter Generator - Parul University</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { margin: 0; background-color: #f0f2f5; display: flex; height: 100vh; overflow: hidden; }
+    
+    /* Left Panel: Input Form */
+    .form-container {
+      width: 42%;
+      padding: 24px;
+      overflow-y: auto;
+      background: #ffffff;
+      border-right: 2px solid #e2e8f0;
+    }
+    .form-section {
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #edf2f7;
+    }
+    .form-section h3 {
+      margin: 0 0 12px 0;
+      color: #1e3a8a;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 8px; }
+    .form-group { margin-bottom: 10px; }
+    label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 4px; color: #475569; }
+    input, select {
+      width: 100%;
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    input:focus, select:focus { outline: none; border-color: #2563eb; }
+    .btn-print {
+      width: 100%;
+      background: #dc2626;
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+    .btn-print:hover { background: #b91c1c; }
+
+    /* Right Panel: Live Document Preview */
+    .preview-container {
+      width: 58%;
+      padding: 24px;
+      overflow-y: auto;
+      background: #64748b;
+      display: flex;
+      justify-content: center;
+    }
+    .document-page {
+      background: #ffffff;
+      width: 210mm;
+      min-height: 297mm;
+      padding: 14mm 18mm;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+      color: #000;
+      font-size: 12.5px;
+      line-height: 1.5;
+    }
+
+    /* Print Document Styling */
+    .letterhead-banner {
+      width: 100%;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .doc-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: 600; font-size: 12.5px; }
+    .doc-title { text-align: center; font-weight: bold; text-decoration: underline; margin-bottom: 12px; font-size: 13.5px; }
+    .doc-body { text-align: justify; margin-bottom: 12px; font-size: 12.5px; }
+    .table-title { font-weight: bold; margin-bottom: 6px; font-size: 12px; }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      font-size: 11.5px;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid #333;
+      padding: 5px 7px;
+      text-align: center;
+    }
+    table.data-table th { background-color: #f1f5f9; font-weight: bold; }
+    table.data-table td:first-child { text-align: left; font-weight: 600; }
+    .doc-footer-note { font-size: 11px; margin-bottom: 10px; font-style: italic; line-height: 1.4; }
+    .notes-list { padding-left: 18px; margin: 4px 0 10px; font-size: 11px; line-height: 1.4; }
+    .signature-area { margin-top: 24px; font-weight: bold; font-size: 12.5px; }
+
+    /* Print settings */
+    @media print {
+      body { background: #fff; display: block; }
+      .form-container { display: none; }
+      .preview-container { padding: 0; background: none; width: 100%; display: block; }
+      .document-page { box-shadow: none; padding: 10mm 15mm; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- INPUT FORM -->
+  <div class="form-container">
+    <div class="form-section">
+      <h3>Letterhead Banner (Optional Upload)</h3>
+      <div class="form-group">
+        <label>Upload custom header image (if not using header.png)</label>
+        <input type="file" id="in_img_file" accept="image/*">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Reference & Student Details</h3>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Ref No</label>
+          <input type="text" id="in_ref" value="LL/2026-27/26353">
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="text" id="in_date" value="29/09/2026">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Student Name</label>
+        <input type="text" id="in_name" value="DEBDOOT DATTA">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Relation</label>
+          <select id="in_rel">
+            <option value="son">son</option>
+            <option value="daughter">daughter</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Parent / Guardian Name</label>
+          <input type="text" id="in_parent" value="GOBINDA DATTA">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Admitted To (Year / Semester)</label>
+        <input type="text" id="in_year_term" value="1st year">
+      </div>
+      <div class="form-group">
+        <label>Course / Specialization</label>
+        <input type="text" id="in_course" value="Bachelor of Technology – Computer Science and Engineering with Artificial Intelligence and Machine Learning">
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label>Program Duration</label>
+          <input type="text" id="in_duration" value="4 years Bachelors Program">
+        </div>
+        <div class="form-group">
+          <label>Campus</label>
+          <input type="text" id="in_campus" value="Vadodara Campus">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Admission Batch</label>
+        <input type="text" id="in_batch" value="2026-27">
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Fee Breakdown (Per Year)</h3>
+      <div id="fee-inputs"></div>
+    </div>
+
+    <div class="form-section">
+      <h3>Course Fee Account</h3>
+      <div class="grid-2">
+        <div class="form-group"><label>Bank</label><input type="text" id="in_c_bank" value="CENTRAL BANK OF INDIA"></div>
+        <div class="form-group"><label>Beneficiary</label><input type="text" id="in_c_ben" value="PARUL UNIVERSITY"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label>Account No</label><input type="text" id="in_c_acc" value="5544556291"></div>
+        <div class="form-group"><label>IFSC Code</label><input type="text" id="in_c_ifsc" value="CBIN0284063"></div>
+      </div>
+      <div class="form-group"><label>Branch</label><input type="text" id="in_c_branch" value="PIET LIMDA"></div>
+    </div>
+
+    <div class="form-section">
+      <h3>Hostel Fee Account</h3>
+      <div class="grid-2">
+        <div class="form-group"><label>Bank</label><input type="text" id="in_h_bank" value="CENTRAL BANK OF INDIA"></div>
+        <div class="form-group"><label>Beneficiary</label><input type="text" id="in_h_ben" value="SHANTI SADAN HOSTEL"></div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group"><label>Account No</label><input type="text" id="in_h_acc" value="2099596365"></div>
+        <div class="form-group"><label>IFSC Code</label><input type="text" id="in_h_ifsc" value="CBIN0284063"></div>
+      </div>
+      <div class="form-group"><label>Branch</label><input type="text" id="in_h_branch" value="PIET LIMDA"></div>
+    </div>
+
+    <button class="btn-print" onclick="window.print()">Print / Export PDF</button>
+  </div>
+
+  <!-- DOCUMENT PREVIEW -->
+  <div class="preview-container">
+    <div class="document-page" id="printable-doc">
+      <!-- LETTERHEAD IMAGE -->
+      <img id="out_banner" class="letterhead-banner" src="header.png" alt="Parul University Letterhead" onerror="this.style.display='none'">
+
+      <div class="doc-meta">
+        <div><span id="out_ref"></span></div>
+        <div><span id="out_date"></span></div>
+      </div>
+
+      <div class="doc-title">To Whom So Ever It may be Concern</div>
+
+      <div class="doc-body">
+        This is to certify that <strong id="out_name"></strong>, <span id="out_rel"></span> of <strong id="out_parent"></strong> has been admitted to <span id="out_year_term"></span> <strong id="out_course"></strong>, a <span id="out_duration"></span> at Parul University, followed by <span id="out_campus"></span>.
+      </div>
+
+      <div class="table-title">
+        Fee Structure for the degree program for students admitted during <span id="out_batch"></span> is as follow:
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Years</th>
+            <th>TUITION FEE</th>
+            <th>UNIVERSITY FEE</th>
+            <th>HOSTEL FEE</th>
+            <th>SCHOLARSHIP</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="out_fee_body"></tbody>
+      </table>
+
+      <div class="doc-footer-note">
+        *Hostel fees may change every year.<br>
+        This letter is issued for the purpose of the student obtaining a bank loan for his/her studies.
+      </div>
+
+      <div class="table-title">Bank Account Details for Fees Transfer to Parul University</div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 28%;"></th>
+            <th style="width: 36%;">FOR COURSE FEE PAYMENT</th>
+            <th style="width: 36%;">FOR HOSTEL FEE PAYMENT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>BANK NAME</td><td id="out_c_bank"></td><td id="out_h_bank"></td></tr>
+          <tr><td>BENEFICIARY NAME</td><td id="out_c_ben"></td><td id="out_h_ben"></td></tr>
+          <tr><td>BANK ACCOUNT NO</td><td id="out_c_acc"></td><td id="out_h_acc"></td></tr>
+          <tr><td>IFSC CODE</td><td id="out_c_ifsc"></td><td id="out_h_ifsc"></td></tr>
+          <tr><td>BRANCH</td><td id="out_c_branch"></td><td id="out_h_branch"></td></tr>
+        </tbody>
+      </table>
+
+      <div class="table-title">Notes regarding Fees Payment by Bank Transfer:</div>
+      <ol class="notes-list">
+        <li>Please quote students name in Transfer Information.</li>
+        <li>Please email transfer copy on <strong>educationloan@paruluniversity.ac.in</strong> and Whatsapp transfer copy on <strong>+916358873321</strong>.</li>
+        <li>Issuance of fee receipt is subject to realization of fees transfer in the bank account.</li>
+        <li>Students applying loan through Bihar Student Credit Card Loan shall forward all documents on <strong>admissions.bihar@paruluniversity.ac.in</strong> for verification.</li>
+      </ol>
+
+      <div class="signature-area">
+        Admission Officer, Parul University
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const years = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
+    const feeDefaults = [
+      { tuition: 151000, univ: 24000, hostel: 100000, sch: 95000 },
+      { tuition: 151000, univ: 24000, hostel: 100000, sch: 95000 },
+      { tuition: 151000, univ: 24000, hostel: 100000, sch: 95000 },
+      { tuition: 151000, univ: 24000, hostel: 100000, sch: 95000 }
+    ];
+
+    function buildFeeInputs() {
+      const container = document.getElementById('fee-inputs');
+      years.forEach((yr, i) => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '10px';
+        div.innerHTML = `
+          <label style="color:#1e3a8a;">${yr}</label>
+          <div class="grid-4">
+            <div><label style="font-weight:normal;font-size:10px;">Tuition</label><input type="number" id="f_t_${i}" value="${feeDefaults[i].tuition}" oninput="sync()"></div>
+            <div><label style="font-weight:normal;font-size:10px;">Univ</label><input type="number" id="f_u_${i}" value="${feeDefaults[i].univ}" oninput="sync()"></div>
+            <div><label style="font-weight:normal;font-size:10px;">Hostel</label><input type="number" id="f_h_${i}" value="${feeDefaults[i].hostel}" oninput="sync()"></div>
+            <div><label style="font-weight:normal;font-size:10px;">Schol.</label><input type="number" id="f_s_${i}" value="${feeDefaults[i].sch}" oninput="sync()"></div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function sync() {
+      // General metadata
+      document.getElementById('out_ref').innerText = document.getElementById('in_ref').value;
+      document.getElementById('out_date').innerText = document.getElementById('in_date').value;
+      document.getElementById('out_name').innerText = document.getElementById('in_name').value;
+      document.getElementById('out_rel').innerText = document.getElementById('in_rel').value;
+      document.getElementById('out_parent').innerText = document.getElementById('in_parent').value;
+      document.getElementById('out_year_term').innerText = document.getElementById('in_year_term').value;
+      document.getElementById('out_course').innerText = document.getElementById('in_course').value;
+      document.getElementById('out_duration').innerText = document.getElementById('in_duration').value;
+      document.getElementById('out_campus').innerText = document.getElementById('in_campus').value;
+      document.getElementById('out_batch').innerText = document.getElementById('in_batch').value;
+
+      // Fee schedule & dynamic total
+      let tableHtml = '';
+      years.forEach((yr, i) => {
+        const t = parseFloat(document.getElementById(`f_t_${i}`).value) || 0;
+        const u = parseFloat(document.getElementById(`f_u_${i}`).value) || 0;
+        const h = parseFloat(document.getElementById(`f_h_${i}`).value) || 0;
+        const s = parseFloat(document.getElementById(`f_s_${i}`).value) || 0;
+        const total = (t + u + h) - s;
+        tableHtml += `
+          <tr>
+            <td>${yr}</td>
+            <td>${t}</td>
+            <td>${u}</td>
+            <td>${h}</td>
+            <td>${s}</td>
+            <td><strong>${total}</strong></td>
+          </tr>
+        `;
+      });
+      document.getElementById('out_fee_body').innerHTML = tableHtml;
+
+      // Course Bank
+      document.getElementById('out_c_bank').innerText = document.getElementById('in_c_bank').value;
+      document.getElementById('out_c_ben').innerText = document.getElementById('in_c_ben').value;
+      document.getElementById('out_c_acc').innerText = document.getElementById('in_c_acc').value;
+      document.getElementById('out_c_ifsc').innerText = document.getElementById('in_c_ifsc').value;
+      document.getElementById('out_c_branch').innerText = document.getElementById('in_c_branch').value;
+
+      // Hostel Bank
+      document.getElementById('out_h_bank').innerText = document.getElementById('in_h_bank').value;
+      document.getElementById('out_h_ben').innerText = document.getElementById('in_h_ben').value;
+      document.getElementById('out_h_acc').innerText = document.getElementById('in_h_acc').value;
+      document.getElementById('out_h_ifsc').innerText = document.getElementById('in_h_ifsc').value;
+      document.getElementById('out_h_branch').innerText = document.getElementById('in_h_branch').value;
+    }
+
+    // Dynamic file upload preview
+    document.getElementById('in_img_file').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const banner = document.getElementById('out_banner');
+          banner.src = evt.target.result;
+          banner.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    buildFeeInputs();
+    document.querySelectorAll('.form-container input, .form-container select').forEach(el => {
+      el.addEventListener('input', sync);
+    });
+    sync();
+  </script>
+</body>
+</html>
